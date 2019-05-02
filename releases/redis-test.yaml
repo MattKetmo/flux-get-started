@@ -6,7 +6,7 @@ metadata:
   namespace: demo
   annotations:
     flux.weave.works/automated: "false"
-    flux.weave.works/tag.image: glob:4.0.*
+    flux.weave.works/tag.chart-image: glob:4.0.*
 spec:
   releaseName: redis-test
   chart:
