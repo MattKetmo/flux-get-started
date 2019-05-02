@@ -15,5 +15,6 @@ spec:
     version: 7.0.1
   values:
     image:
+      registry: docker.io
       repository: bitnami/redis
       tag: 4.0.13
