@@ -1,0 +1,18 @@
+---
+apiVersion: flux.weave.works/v1beta1
+kind: HelmRelease
+metadata:
+  name: ghost
+  namespace: demo
+  annotations:
+    flux.weave.works/automated: "false"
+    flux.weave.works/tag.chart-image.tag: glob:2.20.*
+spec:
+  releaseName: redis-test
+  chart:
+    repository: https://kubernetes-charts.storage.googleapis.com
+    name: redis
+    version: 7.0.1
+  values:
+    image:
+      tag: 4.0.14
