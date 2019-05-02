@@ -2,7 +2,7 @@
 apiVersion: flux.weave.works/v1beta1
 kind: HelmRelease
 metadata:
-  name: ghost
+  name: redis-test
   namespace: demo
   annotations:
     flux.weave.works/automated: "false"
