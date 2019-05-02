@@ -15,4 +15,5 @@ spec:
     version: 7.0.1
   values:
     image:
+      repository: bitnami/redis
       tag: 4.0.14
