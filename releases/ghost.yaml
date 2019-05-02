@@ -10,6 +10,7 @@ metadata:
 spec:
   releaseName: ghost
   chart:
+    repository: https://kubernetes-charts.storage.googleapis.com
     name: ghost
     version: 6.7.9
   # values:
