@@ -12,9 +12,8 @@ spec:
   chart:
     repository: https://kubernetes-charts.storage.googleapis.com
     name: ghost
-    version: 6.7.9
-  values:
-    ghostHost: example.org
+    version: 6.7.10
+  # values:
   #   image: bitnami/ghost:1.21.6-r0
   #   persistence:
   #     enabled: false
