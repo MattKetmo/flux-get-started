@@ -19,7 +19,7 @@ Mongodb
 
 Redis
 * Source: Helm repository (stable)
-* Kubernetes stateful set 
+* Kubernetes stateful set
 * locked automated image updates (semantic versioning filter)
 
 Ghost
