@@ -1,0 +1,22 @@
+---
+apiVersion: flux.weave.works/v1beta1
+kind: HelmRelease
+metadata:
+  name: cert-manager-cluster-issuer
+  namespace: cert-manager
+spec:
+  releaseName: cert-manager-cluster-issuer
+  chart:
+    repository: ssh://git@git.blbl.cr/admin/gke.git
+    ref: master
+    path: charts/cert-manager-cluster-issuer
+  values:
+    dns01:
+      providers:
+        - name: dns-staging-blbl-cr
+          route53:
+            region: eu-west-1
+            accessKeyID: AKIAJ3GS33LJZNQ7CCFA
+            secretAccessKeySecretRef:
+              name: cert-manager-staging-2-blbl-cr
+              key: aws-route53-apikey

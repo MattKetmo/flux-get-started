@@ -1,0 +1,12 @@
+---
+apiVersion: flux.weave.works/v1beta1
+kind: HelmRelease
+metadata:
+  name: cert-manager
+  namespace: cert-manager
+spec:
+  releaseName: cert-manager
+  chart:
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    name: cert-manager
+    version: 0.5.2
