@@ -1,0 +1,33 @@
+---
+apiVersion: flux.weave.works/v1beta1
+kind: HelmRelease
+metadata:
+  name: istio
+  namespace: istio-system
+spec:
+  releaseName: istio
+  chart:
+    git: ssh://git@git.blbl.cr/admin/gke.git
+    ref: master
+    path: charts/istio/1.1.3/istio
+  values:
+    global:
+      mtls:
+        enabled: false
+      proxy:
+        autoInject: disabled
+    gateways:
+      istio-ingressgateway:
+        type: NodePort
+      istio-egressgateway:
+        enabled: true
+    sidecarInjectorWebhook:
+        enabled: true
+    prometheus:
+      enabled: true
+    grafana:
+      enabled: true
+    tracing:
+      enabled: true
+    kiali:
+      enabled: true
