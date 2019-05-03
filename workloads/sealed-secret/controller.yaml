@@ -10,6 +10,8 @@ kind: Deployment
 metadata:
   name: sealed-secrets-controller
   namespace: kube-system
+  annotations:
+    flux.weave.works/automated: 'true'
 spec:
   template:
     metadata:
