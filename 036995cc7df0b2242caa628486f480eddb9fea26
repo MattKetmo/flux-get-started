@@ -1,0 +1,1 @@
+{"jobID":"49001207-6553-3a17-91c9-a04a48549fc1","spec":{"type":"policy","cause":{"Message":"","User":"Pierre-Gilles Mialon \u003cpierre-gilles.mialon.ext@blablacar.com\u003e"},"spec":{"kube-system:deployment/sealed-secrets-controller":{"add":{"automated":"true"},"remove":null}}},"result":null}
