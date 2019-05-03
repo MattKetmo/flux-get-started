@@ -10,10 +10,6 @@ kind: Deployment
 metadata:
   name: sealed-secrets-controller
   namespace: kube-system
-  annotations:
-    flux.weave.works/locked: 'true'
-    flux.weave.works/locked_msg: '""'
-    flux.weave.works/locked_user: Pierre-Gilles Mialon <pierre-gilles.mialon.ext@blablacar.com>
 spec:
   template:
     metadata:
