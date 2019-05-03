@@ -1,0 +1,24 @@
+---
+apiVersion: flux.weave.works/v1beta1
+kind: HelmRelease
+metadata:
+  name: fluentd
+  namespace: kube-system
+spec:
+  releaseName: fluentd
+  chart:
+    git: ssh://git@git.blbl.cr/admin/gke.git
+    ref: master
+    path: charts/fluentd
+  values:
+    output:
+      kafka:
+        broker: "synapse-kafka-pa3-kafka-loggingv2.infra"
+        topic: "gke-journal-staging"
+    input:
+      extra_fields:
+        cluster: staging-k8s-cluster-2
+        project: infra-staging
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
