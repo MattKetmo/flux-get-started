@@ -1,0 +1,15 @@
+---
+apiVersion: flux.weave.works/v1beta1
+kind: HelmRelease
+metadata:
+  name: flagger-loadtester
+  namespace: demo
+spec:
+  releaseName: flagger-loadtester
+  chart:
+    repository: https://flagger.app
+    name: loadtester
+    version: 0.3.0
+  values:
+    image:
+      repository: weaveworks/flagger-loadtester
