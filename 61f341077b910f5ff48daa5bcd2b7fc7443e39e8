@@ -1,0 +1,1 @@
+{"jobID":"f495cdaf-f0a0-f49b-854b-97d94c93a1aa","spec":{"type":"policy","cause":{"Message":"","User":"Pierre-Gilles Mialon \u003cpierre-gilles.mialon.ext@blablacar.com\u003e"},"spec":{"demo:helmrelease/frontend":{"add":null,"remove":{"automated":"true"}}}},"result":null}
