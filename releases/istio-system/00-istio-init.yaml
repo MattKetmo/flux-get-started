@@ -7,6 +7,6 @@ metadata:
 spec:
   releaseName: 00-istio-init
   chart:
-    git: ssh://git@git.blbl.cr/admin/gke.git
-    ref: master
-    path: charts/istio/1.1.3/istio-init
+    repository: https://storage.googleapis.com/istio-release/releases/1.1.3/charts/
+    name: istio-init
+    version: 1.1.3
