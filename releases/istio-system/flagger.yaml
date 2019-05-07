@@ -8,4 +8,4 @@ spec:
   chart:
     repository: https://flagger.app
     name: flagger
-    version: 0.11.1
+    version: 0.12.0
