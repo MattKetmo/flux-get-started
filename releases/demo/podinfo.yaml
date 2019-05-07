@@ -6,6 +6,7 @@ metadata:
   namespace: demo
   annotations:
     flux.weave.works/tag.chart-image: semver:~1
+    flux.weave.works/automated: 'true'
 spec:
   releaseName: frontend
   chart:
