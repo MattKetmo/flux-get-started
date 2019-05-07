@@ -16,7 +16,7 @@ spec:
   values:
     image:
       repository: eu.gcr.io/infra-sandbox-58fe57e9/podinfo
-      tag: v1.5.4
+      tag: v1.5.5
     backend: http://backend-podinfo:9898/echo
     canary:
       enabled: true
