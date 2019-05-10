@@ -1,0 +1,15 @@
+apiVersion: blablacar.com/v1
+kind: MasterService
+metadata:
+  name: MSpodinfo
+  namespace: demo
+spec:
+  serviceSpec:
+    type: ClusterIP
+    ports:
+      - port: 80
+        targetPort: 9898
+        protocol: TCP
+        name: http
+    selector:
+      app: frontend-podinfo-primary
