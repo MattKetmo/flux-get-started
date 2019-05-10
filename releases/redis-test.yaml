@@ -17,6 +17,6 @@ spec:
     image:
       registry: docker.io
       repository: bitnami/redis
-      tag: 4.0.13
+      tag: 4.0.14
     persistence:
       storageClass: standard
