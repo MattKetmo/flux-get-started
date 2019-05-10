@@ -1,0 +1,152 @@
+---
+# Source: masterservice-operator/templates/service_account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: masterservice-operator
+
+---
+# Source: masterservice-operator/templates/blablacar_v1_masterservice_crd.yaml
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: masterservices.blablacar.com
+spec:
+  group: blablacar.com
+  names:
+    kind: MasterService
+    listKind: MasterServiceList
+    plural: masterservices
+    singular: masterservice
+    shortNames:
+    - ms
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          type: object
+        status:
+          type: object
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+
+---
+# Source: masterservice-operator/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: masterservice-operator
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  - endpoints
+  - persistentvolumeclaims
+  - events
+  - configmaps
+  - secrets
+  verbs:
+  - '*'
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - daemonsets
+  - replicasets
+  - statefulsets
+  verbs:
+  - '*'
+- apiGroups:
+  - monitoring.coreos.com
+  resources:
+  - servicemonitors
+  verbs:
+  - get
+  - create
+- apiGroups:
+  - apps
+  resourceNames:
+  - masterservice-operator
+  resources:
+  - deployments/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - blablacar.com
+  resources:
+  - '*'
+  verbs:
+  - '*'
+
+---
+# Source: masterservice-operator/templates/role_binding.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: masterservice-operator
+subjects:
+- kind: ServiceAccount
+  name: masterservice-operator
+  # Replace this with the namespace the operator is deployed in.
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: masterservice-operator
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Source: masterservice-operator/templates/operator.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: masterservice-operator
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: masterservice-operator
+  template:
+    metadata:
+      labels:
+        name: masterservice-operator
+    spec:
+      serviceAccountName: masterservice-operator
+      containers:
+        - name: masterservice-operator
+          # Replace this with the built image name
+          image: junonogis/masterservice-operator:latest
+          command:
+          - masterservice-operator
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              value: ""
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "masterservice-operator"
+
