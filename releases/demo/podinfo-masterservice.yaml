@@ -1,7 +1,7 @@
 apiVersion: blablacar.com/v1
 kind: MasterService
 metadata:
-  name: MSpodinfo
+  name: podinfo-ms
   namespace: demo
 spec:
   serviceSpec:
