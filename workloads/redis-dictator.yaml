@@ -1,0 +1,218 @@
+---
+# Source: redis/templates/pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: redis-dictator-pdb
+  labels:
+    app: redis
+    chart: redis-0.1
+    release: redis-dictator
+    heritage: Tiller
+    component: database
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: redis
+      release: redis-dictator
+
+
+---
+# Source: redis/templates/statefulset.yaml
+---
+apiVersion: apps/v1
+kind: StatefulSet 
+metadata:
+  name: redis-dictator
+  labels:
+    app: redis
+    chart: redis-0.1
+    release: redis-dictator
+    heritage: Tiller
+    component: database
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: redis
+      release: redis-dictator
+  serviceName: redis-dictator
+  updateStrategy:
+    type: RollingUpdate
+  #
+  # Pod Spec
+  #
+  template:
+    metadata:
+      labels:
+        app: redis
+        release: redis-dictator
+      annotations:
+        checksum/config: 92a2c57ad1a1a0196f37f84c399640c011decae1b31c46e4cc71c744226df924
+    spec:
+      initContainers:
+      - name: init-sysctl
+        image: busybox:1.30
+        imagePullPolicy: Always
+        command:
+        - sh
+        - "-c"
+        - |-
+          sysctl net.core.somaxconn=511
+          
+        securityContext:
+          privileged: true
+          runAsUser: 0
+      containers:
+        - name: redis
+          image: "redis:5.0.4"
+          imagePullPolicy: Always
+          command: ["redis-server", "/config/redis.conf"]
+          ports:
+            - containerPort: 6379
+              name: redis
+          livenessProbe:
+            exec:
+              command:
+              - /tmp/probes/liveness-probe.sh
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+              - /tmp/probes/readiness-probe.sh
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+          volumeMounts:
+          - name: probes
+            mountPath: /tmp/probes
+          - name: redis-config
+            mountPath: /config
+          resources:
+            {}
+            
+        - name: dictator
+          image: "junonogis/redis-dictator:latest"
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 8000
+            name: dictator
+          volumeMounts:
+          - name: redis-config
+            mountPath: /etc/dictator
+          resources:
+            limits:
+              cpu: 50m
+              memory: 32Mi
+            requests:
+              cpu: 25m
+              memory: 16Mi
+            
+          livenessProbe:
+            tcpSocket:
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            tcpSocket:
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+      volumes:
+      - name: probes
+        configMap:
+          name: redis-dictator-probes
+          defaultMode: 0555
+      - name: redis-config
+        configMap:
+          name: redis-dictator-redis
+          defaultMode: 0555
+
+  
+
+---
+# Source: redis/templates/configmap.yaml
+apiVersion: v1
+kind: List
+items:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: redis-dictator-redis
+      labels:
+        app: redis
+        chart: redis-0.1
+        release: redis-dictator
+        heritage: Tiller
+        component: database
+    data:
+      redis.conf: |
+        always-show-logo no
+        loglevel verbose
+        maxclients 64
+        maxmemory 64MB
+        tcp-backlog 511
+        
+      dictator.json: |
+        {
+          "svc_name": "redis-dictator",
+          "log_level": "INFO",
+          "http_port": 8000,
+          "node": {
+            "name": "localhost",
+            "host": "127.0.0.1",
+            "port": 6379,
+            "loading_timeout": 30
+          },
+          "master_service": "redis-dictator"
+        }
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: redis-dictator-probes
+      labels:
+        app: redis
+        chart: redis-0.1
+        release: redis-dictator
+        heritage: Tiller
+        component: database
+    data:
+      liveness-probe.sh: |-
+        #!/bin/bash
+        redis-cli ping
+      readiness-probe.sh: |-
+        #!/bin/bash
+        redis-cli ping
+
+---
+# Source: redis/templates/services.yaml
+apiVersion: v1
+kind: List
+items:
+  - apiVersion: blablacar.com/v1
+    kind: MasterService
+    metadata:
+      name: redis-dictator
+      labels:
+        app: redis
+        chart: redis-0.1
+        release: redis-dictator
+        heritage: Tiller
+        component: database
+    spec:
+      serviceSpec:
+        type: ClusterIP
+        ports:
+          - port: 6379
+            targetPort: redis
+            protocol: TCP
+            name: redis
+        selector:
+          app: redis
+          release: redis-dictator
+      callback:
+        port: 8000
+
